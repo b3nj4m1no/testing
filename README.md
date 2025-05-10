@@ -31,8 +31,9 @@ I test sono scritti utilizzando il framework **Mocha** per la struttura dei test
 - Validazioni per input errati (prezzo negativo, quantità zero, sconto eccessivo).
 
 ## Licenza
-Questo progetto è stato creato a scopo educativo per la materia **TEP** e può essere utilizzato per scopi simili. Può essere liberamente modificato e distribuito con l'attribuzione appropriata.
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+Questo progetto è stato creato a scopo educativo per la materia **TEP** e può essere utilizzato per scopi simili. Può essere liberamente modificato e distribuito con l'attribuzione appropriata.
 ---
 
 ### Creato da: **Benjamin**
