@@ -3,19 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BenjaminShop - Advanced Testing</title>
+  <title>BenjaminShop</title>
   
-  <!-- Bootstrap 5 -->
-  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mocha/10.2.0/mocha.min.css" rel="stylesheet">
 
+  <style>
+    body {
+      background-color: #e9ecef;
+      font-family: 'Arial', sans-serif;
+    }
+
+    header {
+      background: linear-gradient(45deg, #4e73df, #1cc88a);
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      font-size: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .container-custom {
+      background-color: white;
+      border-radius: 15px;
+      padding: 3rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      margin-top: 4rem;
+    }
+
+    .title {
+      color: #004085;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .btn-custom {
+      background-color: #1cc88a;
+      border-color: #1cc88a;
+      color: white;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .btn-custom:hover {
+      background-color: #17a673;
+      border-color: #17a673;
+    }
+
+    #mocha {
+      margin-top: 3rem;
+    }
+
+    .mocha-report {
+      background-color: #f8f9fc;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-top: 2rem;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .mocha-report h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1cc88a;
+    }
+
+    .mocha-report .test-passed {
+      color: #28a745;
+    }
+
+    .mocha-report .test-failed {
+      color: #dc3545;
+    }
+
+    .mocha-report .test-skipped {
+      color: #6c757d;
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  <h1>BenjaminShop - Test Suite</h1>
-  <p>Testing avanzati per il sistema di e-commerce BenjaminShop</p>
+  <h1>BenjaminShop</h1>
+  <p>solo testing oggi lmao</p>
 </header>
 
 <div class="container container-custom">
@@ -23,11 +104,140 @@
   <div id="mocha"></div>
 </div>
 
-<script src="assets/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/10.2.0/mocha.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.3.7/chai.min.js"></script>
-<script src="assets/js/test.js"></script>
 <script>mocha.setup('bdd')</script>
+
+<script>
+  class Carrello {
+    constructor() {
+      this.prodotti = [];
+    }
+
+    aggiungi(prodotto, quantità = 1) {
+      if (quantità <= 0) throw new Error("Quantità non valida");
+      const esistente = this.prodotti.find(p => p.prodotto.nome === prodotto.nome);
+      if (esistente) {
+        esistente.quantità += quantità;
+      } else {
+        this.prodotti.push({ prodotto, quantità });
+      }
+    }
+
+    rimuovi(nome) {
+      this.prodotti = this.prodotti.filter(p => p.prodotto.nome !== nome);
+    }
+
+    totale() {
+      return this.prodotti.reduce((tot, p) => tot + (p.prodotto.prezzo * p.quantità), 0);
+    }
+
+    scontaGlobalmente(percentuale) {
+      if (percentuale < 0 || percentuale > 100) throw new Error("Percentuale non valida");
+      for (let item of this.prodotti) {
+        item.prodotto.prezzo -= item.prodotto.prezzo * (percentuale / 100);
+      }
+    }
+  }
+
+  class Prodotto {
+    constructor(nome, prezzo, categoria = "generico") {
+      if (prezzo <= 0) throw new Error("Prezzo non valido");
+      this.nome = nome;
+      this.prezzo = prezzo;
+      this.categoria = categoria;
+    }
+
+    applicaSconto(percentuale) {
+      if (percentuale < 0 || percentuale > 100) throw new Error("Percentuale non valida");
+      this.prezzo = this.prezzo - (this.prezzo * percentuale / 100);
+    }
+  }
+</script>
+
+<script>
+  const expect = chai.expect;
+
+  describe("Prodotto", function () {
+    it("crea un prodotto valido", function () {
+      const p = new Prodotto("Laptop", 1200, "elettronica");
+      expect(p.nome).to.equal("Laptop");
+      expect(p.prezzo).to.equal(1200);
+      expect(p.categoria).to.equal("elettronica");
+    });
+
+    it("lancia errore per prezzo negativo", function () {
+      expect(() => new Prodotto("X", -5)).to.throw("Prezzo non valido");
+    });
+
+    it("applica correttamente uno sconto", function () {
+      const p = new Prodotto("Tablet", 400);
+      p.applicaSconto(25);
+      expect(p.prezzo).to.be.closeTo(300, 0.01);
+    });
+
+    it("rifiuta sconto maggiore del 100%", function () {
+      const p = new Prodotto("TV", 1000);
+      expect(() => p.applicaSconto(150)).to.throw("Percentuale non valida");
+    });
+  });
+
+  describe("Carrello", function () {
+    let c, p1, p2;
+
+    beforeEach(function () {
+      c = new Carrello();
+      p1 = new Prodotto("Mouse", 50);
+      p2 = new Prodotto("Keyboard", 100);
+    });
+
+    it("aggiunge prodotti correttamente", function () {
+      c.aggiungi(p1, 2);
+      expect(c.prodotti.length).to.equal(1);
+      expect(c.prodotti[0].quantità).to.equal(2);
+    });
+
+    it("accumula quantità se il prodotto esiste", function () {
+      c.aggiungi(p1, 1);
+      c.aggiungi(p1, 2);
+      expect(c.prodotti[0].quantità).to.equal(3);
+    });
+
+    it("rimuove correttamente un prodotto", function () {
+      c.aggiungi(p1, 1);
+      c.aggiungi(p2, 1);
+      c.rimuovi("Mouse");
+      expect(c.prodotti.length).to.equal(1);
+      expect(c.prodotti[0].prodotto.nome).to.equal("Keyboard");
+    });
+
+    it("calcola il totale corretto", function () {
+      c.aggiungi(p1, 2);
+      c.aggiungi(p2, 1);
+      expect(c.totale()).to.equal(200);
+    });
+
+    it("applica sconto globale a tutti i prodotti", function () {
+      c.aggiungi(p1, 1);
+      c.aggiungi(p2, 1);
+      c.scontaGlobalmente(50);
+      expect(c.totale()).to.be.closeTo(75, 0.01);
+    });
+
+    it("lancia errore per quantità zero", function () {
+      expect(() => c.aggiungi(p1, 0)).to.throw("Quantità non valida");
+    });
+
+    it("lancia errore per sconto globale eccessivo", function () {
+      c.aggiungi(p1, 1);
+      expect(() => c.scontaGlobalmente(200)).to.throw("Percentuale non valida");
+    });
+  });
+</script>
+
+<script>
+  mocha.run()
+</script>
 
 </body>
 </html>
