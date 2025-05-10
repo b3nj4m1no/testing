@@ -11,7 +11,7 @@ BenjaminShop è un progetto realizzato come parte del compito per la materia **T
 ## Come Usare
 
 1. **Scarica il progetto**: 
-   - Puoi scaricare il progetto completo tramite git .
+   - Puoi scaricare il progetto completo tramite `git clone https://github.com/b3nj4m1no/testing.git` .
    
 2. **Aggiungi il progetto alla tua cartella locale**: 
    - Estrai il contenuto del file ZIP nella tua cartella di lavoro.
